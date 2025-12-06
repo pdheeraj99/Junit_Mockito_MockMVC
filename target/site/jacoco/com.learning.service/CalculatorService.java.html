@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CalculatorService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JUnit 5 Learning Project</a> &gt; <a href="index.source.html" class="el_package">com.learning.service</a> &gt; <span class="el_source">CalculatorService.java</span></div><h1>CalculatorService.java</h1><pre class="source lang-java linenums">package com.learning.service;
+
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+/**
+ * Calculator Service - A simple service to demonstrate JUnit 5 testing
+ * Each method has specific behavior that we'll test with different annotations
+ */
+@Service
+<span class="fc" id="L11">public class CalculatorService {</span>
+
+    // ===== Basic Operations (for basic assertions) =====
+    
+    public int add(int a, int b) {
+<span class="fc" id="L16">        return a + b;</span>
+    }
+
+    public int subtract(int a, int b) {
+<span class="fc" id="L20">        return a - b;</span>
+    }
+
+    public int multiply(int a, int b) {
+<span class="fc" id="L24">        return a * b;</span>
+    }
+
+    public double divide(int a, int b) {
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if (b == 0) {</span>
+<span class="fc" id="L29">            throw new ArithmeticException(&quot;Cannot divide by zero!&quot;);</span>
+        }
+<span class="fc" id="L31">        return (double) a / b;</span>
+    }
+
+    // ===== For assertNull / assertNotNull =====
+    
+    public String processInput(String input) {
+<span class="fc bfc" id="L37" title="All 4 branches covered.">        if (input == null || input.isEmpty()) {</span>
+<span class="fc" id="L38">            return null;</span>
+        }
+<span class="fc" id="L40">        return input.toUpperCase();</span>
+    }
+
+    // ===== For assertTrue / assertFalse =====
+    
+    public boolean isPositive(int number) {
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        return number &gt; 0;</span>
+    }
+
+    public boolean isEven(int number) {
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        return number % 2 == 0;</span>
+    }
+
+    public boolean isPrime(int number) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (number &lt;= 1) return false;</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (number &lt;= 3) return true;</span>
+<span class="pc bpc" id="L56" title="1 of 4 branches missed.">        if (number % 2 == 0 || number % 3 == 0) return false;</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        for (int i = 5; i * i &lt;= number; i += 6) {</span>
+<span class="nc bnc" id="L58" title="All 4 branches missed.">            if (number % i == 0 || number % (i + 2) == 0) return false;</span>
+        }
+<span class="fc" id="L60">        return true;</span>
+    }
+
+    // ===== For assertArrayEquals =====
+    
+    public int[] getSquares(int... numbers) {
+<span class="fc" id="L66">        int[] result = new int[numbers.length];</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        for (int i = 0; i &lt; numbers.length; i++) {</span>
+<span class="fc" id="L68">            result[i] = numbers[i] * numbers[i];</span>
+        }
+<span class="fc" id="L70">        return result;</span>
+    }
+
+    // ===== For assertIterableEquals =====
+    
+    public List&lt;Integer&gt; getMultiples(int number, int count) {
+<span class="fc" id="L76">        return java.util.stream.IntStream.rangeClosed(1, count)</span>
+<span class="fc" id="L77">                .map(i -&gt; number * i)</span>
+<span class="fc" id="L78">                .boxed()</span>
+<span class="fc" id="L79">                .toList();</span>
+    }
+
+    // ===== For Exception Testing (assertThrows) =====
+    
+    public int factorial(int n) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (n &lt; 0) {</span>
+<span class="fc" id="L86">            throw new IllegalArgumentException(&quot;Number must be non-negative&quot;);</span>
+        }
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (n &gt; 20) {</span>
+<span class="fc" id="L89">            throw new ArithmeticException(&quot;Number too large, may cause overflow&quot;);</span>
+        }
+<span class="fc" id="L91">        int result = 1;</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        for (int i = 2; i &lt;= n; i++) {</span>
+<span class="fc" id="L93">            result *= i;</span>
+        }
+<span class="fc" id="L95">        return result;</span>
+    }
+
+    // ===== For Parameterized Tests =====
+    
+    public String getGrade(int score) {
+<span class="fc bfc" id="L101" title="All 4 branches covered.">        if (score &lt; 0 || score &gt; 100) {</span>
+<span class="fc" id="L102">            throw new IllegalArgumentException(&quot;Score must be between 0 and 100&quot;);</span>
+        }
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (score &gt;= 90) return &quot;A&quot;;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (score &gt;= 80) return &quot;B&quot;;</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if (score &gt;= 70) return &quot;C&quot;;</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (score &gt;= 60) return &quot;D&quot;;</span>
+<span class="fc" id="L108">        return &quot;F&quot;;</span>
+    }
+
+    public int sumOfDigits(int number) {
+<span class="fc" id="L112">        number = Math.abs(number);</span>
+<span class="fc" id="L113">        int sum = 0;</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        while (number &gt; 0) {</span>
+<span class="fc" id="L115">            sum += number % 10;</span>
+<span class="fc" id="L116">            number /= 10;</span>
+        }
+<span class="fc" id="L118">        return sum;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

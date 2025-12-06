@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JUnit 5 Learning Project</a> &gt; <a href="index.source.html" class="el_package">com.learning.service</a> &gt; <span class="el_source">OrderService.java</span></div><h1>OrderService.java</h1><pre class="source lang-java linenums">package com.learning.service;
+
+import com.learning.external.EmailService;
+import com.learning.external.PaymentGateway;
+import com.learning.external.PaymentGateway.PaymentResult;
+import com.learning.model.Order;
+import com.learning.model.Order.OrderStatus;
+import com.learning.model.OrderItem;
+import com.learning.model.User;
+import com.learning.repository.OrderRepository;
+import com.learning.repository.UserRepository;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * OrderService - Complex business logic for orders
+ * 
+ * Multiple dependencies to mock:
+ * - OrderRepository (database)
+ * - UserRepository (database)
+ * - PaymentGateway (external payment)
+ * - EmailService (external email)
+ */
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final PaymentGateway paymentGateway;
+    private final EmailService emailService;
+
+<span class="fc" id="L33">    public OrderService(OrderRepository orderRepository,</span>
+            UserRepository userRepository,
+            PaymentGateway paymentGateway,
+            EmailService emailService) {
+<span class="fc" id="L37">        this.orderRepository = orderRepository;</span>
+<span class="fc" id="L38">        this.userRepository = userRepository;</span>
+<span class="fc" id="L39">        this.paymentGateway = paymentGateway;</span>
+<span class="fc" id="L40">        this.emailService = emailService;</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * Create a new order
+     * 
+     * Complex flow:
+     * 1. Validate user exists
+     * 2. Validate items not empty
+     * 3. Calculate total
+     * 4. Create order
+     * 5. Return pending order
+     */
+    public Order createOrder(Long userId, List&lt;OrderItem&gt; items, String shippingAddress) {
+        // Validate user
+<span class="fc" id="L55">        User user = userRepository.findById(userId)</span>
+<span class="pc" id="L56">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;User not found: &quot; + userId));</span>
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (!user.isActive()) {</span>
+<span class="fc" id="L59">            throw new IllegalStateException(&quot;Cannot create order for inactive user&quot;);</span>
+        }
+
+        // Validate items
+<span class="pc bpc" id="L63" title="1 of 4 branches missed.">        if (items == null || items.isEmpty()) {</span>
+<span class="fc" id="L64">            throw new IllegalArgumentException(&quot;Order must have at least one item&quot;);</span>
+        }
+
+        // Validate shipping address
+<span class="pc bpc" id="L68" title="2 of 4 branches missed.">        if (shippingAddress == null || shippingAddress.isBlank()) {</span>
+<span class="nc" id="L69">            throw new IllegalArgumentException(&quot;Shipping address is required&quot;);</span>
+        }
+
+        // Create order
+<span class="fc" id="L73">        Order order = new Order(userId, items);</span>
+<span class="fc" id="L74">        order.setShippingAddress(shippingAddress);</span>
+<span class="fc" id="L75">        order.setTotalAmount(order.calculateTotal());</span>
+<span class="fc" id="L76">        order.setStatus(OrderStatus.PENDING);</span>
+
+<span class="fc" id="L78">        return orderRepository.save(order);</span>
+    }
+
+    /**
+     * Process payment for an order
+     * 
+     * Complex flow:
+     * 1. Find order
+     * 2. Verify order is pending
+     * 3. Process payment
+     * 4. Update order status
+     * 5. Send confirmation email
+     */
+    public Order processPayment(Long orderId, String cardToken) {
+        // Find order
+<span class="fc" id="L93">        Order order = orderRepository.findById(orderId)</span>
+<span class="pc" id="L94">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Order not found: &quot; + orderId));</span>
+
+        // Verify status
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if (order.getStatus() != OrderStatus.PENDING) {</span>
+<span class="nc" id="L98">            throw new IllegalStateException(&quot;Order is not pending payment: &quot; + order.getStatus());</span>
+        }
+
+        // Process payment
+<span class="fc" id="L102">        PaymentResult result = paymentGateway.processPayment(</span>
+<span class="fc" id="L103">                order.getTotalAmount(),</span>
+<span class="fc" id="L104">                &quot;INR&quot;,</span>
+<span class="fc" id="L105">                cardToken);</span>
+
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        if (!result.success()) {</span>
+<span class="fc" id="L108">            throw new RuntimeException(&quot;Payment failed: &quot; + result.message());</span>
+        }
+
+        // Update order
+<span class="fc" id="L112">        order.setPaymentId(result.transactionId());</span>
+<span class="fc" id="L113">        order.setStatus(OrderStatus.CONFIRMED);</span>
+<span class="fc" id="L114">        Order savedOrder = orderRepository.save(order);</span>
+
+        // Send confirmation email
+<span class="fc" id="L117">        User user = userRepository.findById(order.getUserId()).orElse(null);</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (user != null) {</span>
+<span class="fc" id="L119">            emailService.sendOrderConfirmation(</span>
+<span class="fc" id="L120">                    user.getEmail(),</span>
+<span class="fc" id="L121">                    orderId,</span>
+<span class="fc" id="L122">                    order.getTotalAmount().toString());</span>
+        }
+
+<span class="fc" id="L125">        return savedOrder;</span>
+    }
+
+    /**
+     * Cancel an order with refund
+     */
+    public Order cancelOrder(Long orderId, String reason) {
+<span class="fc" id="L132">        Order order = orderRepository.findById(orderId)</span>
+<span class="pc" id="L133">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Order not found: &quot; + orderId));</span>
+
+        // Can only cancel if not shipped
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (order.getStatus() == OrderStatus.SHIPPED ||</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">                order.getStatus() == OrderStatus.DELIVERED) {</span>
+<span class="fc" id="L138">            throw new IllegalStateException(&quot;Cannot cancel shipped/delivered order&quot;);</span>
+        }
+
+        // Refund if payment was made
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">        if (order.getPaymentId() != null) {</span>
+<span class="nc" id="L143">            PaymentResult refund = paymentGateway.refundPayment(</span>
+<span class="nc" id="L144">                    order.getPaymentId(),</span>
+<span class="nc" id="L145">                    order.getTotalAmount());</span>
+
+<span class="nc bnc" id="L147" title="All 2 branches missed.">            if (!refund.success()) {</span>
+<span class="nc" id="L148">                throw new RuntimeException(&quot;Refund failed: &quot; + refund.message());</span>
+            }
+        }
+
+<span class="fc" id="L152">        order.setStatus(OrderStatus.CANCELLED);</span>
+<span class="fc" id="L153">        return orderRepository.save(order);</span>
+    }
+
+    /**
+     * Ship an order
+     */
+    public Order shipOrder(Long orderId, String trackingNumber) {
+<span class="nc" id="L160">        Order order = orderRepository.findById(orderId)</span>
+<span class="nc" id="L161">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Order not found: &quot; + orderId));</span>
+
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (order.getStatus() != OrderStatus.CONFIRMED &amp;&amp;</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">                order.getStatus() != OrderStatus.PROCESSING) {</span>
+<span class="nc" id="L165">            throw new IllegalStateException(&quot;Order not ready for shipping: &quot; + order.getStatus());</span>
+        }
+
+<span class="nc" id="L168">        order.setStatus(OrderStatus.SHIPPED);</span>
+<span class="nc" id="L169">        Order savedOrder = orderRepository.save(order);</span>
+
+        // Send shipping notification
+<span class="nc" id="L172">        User user = userRepository.findById(order.getUserId()).orElse(null);</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">        if (user != null) {</span>
+<span class="nc" id="L174">            emailService.sendShippingNotification(</span>
+<span class="nc" id="L175">                    user.getEmail(),</span>
+<span class="nc" id="L176">                    orderId,</span>
+<span class="nc" id="L177">                    trackingNumber);</span>
+        }
+
+<span class="nc" id="L180">        return savedOrder;</span>
+    }
+
+    /**
+     * Get user's orders
+     */
+    public List&lt;Order&gt; getUserOrders(Long userId) {
+        // Verify user exists
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        if (!userRepository.findById(userId).isPresent()) {</span>
+<span class="nc" id="L189">            throw new IllegalArgumentException(&quot;User not found: &quot; + userId);</span>
+        }
+<span class="nc" id="L191">        return orderRepository.findByUserId(userId);</span>
+    }
+
+    /**
+     * Get order by ID
+     */
+    public Optional&lt;Order&gt; getOrder(Long orderId) {
+<span class="nc" id="L198">        return orderRepository.findById(orderId);</span>
+    }
+
+    /**
+     * Calculate order total with discount
+     */
+    public BigDecimal calculateTotalWithDiscount(Long orderId, int discountPercent) {
+<span class="nc" id="L205">        Order order = orderRepository.findById(orderId)</span>
+<span class="nc" id="L206">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Order not found: &quot; + orderId));</span>
+
+<span class="nc bnc" id="L208" title="All 4 branches missed.">        if (discountPercent &lt; 0 || discountPercent &gt; 100) {</span>
+<span class="nc" id="L209">            throw new IllegalArgumentException(&quot;Invalid discount: &quot; + discountPercent);</span>
+        }
+
+<span class="nc" id="L212">        BigDecimal total = order.getTotalAmount();</span>
+<span class="nc" id="L213">        BigDecimal discount = total.multiply(BigDecimal.valueOf(discountPercent))</span>
+<span class="nc" id="L214">                .divide(BigDecimal.valueOf(100));</span>
+
+<span class="nc" id="L216">        return total.subtract(discount);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

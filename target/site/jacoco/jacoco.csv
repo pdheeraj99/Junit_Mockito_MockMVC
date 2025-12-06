@@ -1,0 +1,14 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+JUnit 5 Learning Project,com.learning.external,PaymentGateway.PaymentResult,0,12,0,0,0,1,0,1,0,1
+JUnit 5 Learning Project,com.learning.service,UserService,30,188,9,19,5,41,9,17,2,10
+JUnit 5 Learning Project,com.learning.service,OrderService,179,167,21,15,33,45,23,8,9,4
+JUnit 5 Learning Project,com.learning.service,CalculatorService,15,199,7,39,1,46,5,33,0,15
+JUnit 5 Learning Project,com.learning,JunitLearningApplication,5,3,0,0,2,1,1,1,1,1
+JUnit 5 Learning Project,com.learning.model,Order,34,87,1,3,10,30,8,15,7,14
+JUnit 5 Learning Project,com.learning.model,DayOfWeek,2,97,1,1,0,13,1,4,0,4
+JUnit 5 Learning Project,com.learning.model,Order.OrderStatus,0,64,0,0,0,2,0,1,0,1
+JUnit 5 Learning Project,com.learning.model,OrderItem,49,21,0,0,17,8,11,3,11,3
+JUnit 5 Learning Project,com.learning.model,User,40,108,6,0,11,39,7,18,4,18
+JUnit 5 Learning Project,com.learning.controller,UserController,4,40,0,0,1,9,1,4,1,4
+JUnit 5 Learning Project,com.learning.controller,UserController.RegistrationRequest,0,12,0,0,0,1,0,1,0,1
+JUnit 5 Learning Project,com.learning.exception,GlobalExceptionHandler,32,32,0,0,6,8,2,3,2,3

@@ -1,0 +1,17 @@
+com\learning\model\Order$OrderStatus.class
+com\learning\external\PaymentGateway$PaymentResult.class
+com\learning\model\OrderItem.class
+com\learning\service\UserService.class
+com\learning\controller\UserController$RegistrationRequest.class
+com\learning\model\User.class
+com\learning\external\PaymentGateway.class
+com\learning\JunitLearningApplication.class
+com\learning\repository\UserRepository.class
+com\learning\service\OrderService.class
+com\learning\repository\OrderRepository.class
+com\learning\model\DayOfWeek.class
+com\learning\model\Order.class
+com\learning\exception\GlobalExceptionHandler.class
+com\learning\service\CalculatorService.class
+com\learning\controller\UserController.class
+com\learning\external\EmailService.class

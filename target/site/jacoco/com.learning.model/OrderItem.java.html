@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OrderItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JUnit 5 Learning Project</a> &gt; <a href="index.source.html" class="el_package">com.learning.model</a> &gt; <span class="el_source">OrderItem.java</span></div><h1>OrderItem.java</h1><pre class="source lang-java linenums">package com.learning.model;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+
+/**
+ * OrderItem - represents a single item in an order
+ */
+public class OrderItem {
+
+    private Long id;
+    private Long productId;
+    private String productName;
+    private int quantity;
+    private BigDecimal price;
+
+<span class="nc" id="L17">    public OrderItem() {</span>
+<span class="nc" id="L18">    }</span>
+
+<span class="fc" id="L20">    public OrderItem(Long productId, String productName, int quantity, BigDecimal price) {</span>
+<span class="fc" id="L21">        this.productId = productId;</span>
+<span class="fc" id="L22">        this.productName = productName;</span>
+<span class="fc" id="L23">        this.quantity = quantity;</span>
+<span class="fc" id="L24">        this.price = price;</span>
+<span class="fc" id="L25">    }</span>
+
+    // Getters and Setters
+    public Long getId() {
+<span class="nc" id="L29">        return id;</span>
+    }
+
+    public void setId(Long id) {
+<span class="nc" id="L33">        this.id = id;</span>
+<span class="nc" id="L34">    }</span>
+
+    public Long getProductId() {
+<span class="nc" id="L37">        return productId;</span>
+    }
+
+    public void setProductId(Long productId) {
+<span class="nc" id="L41">        this.productId = productId;</span>
+<span class="nc" id="L42">    }</span>
+
+    public String getProductName() {
+<span class="nc" id="L45">        return productName;</span>
+    }
+
+    public void setProductName(String productName) {
+<span class="nc" id="L49">        this.productName = productName;</span>
+<span class="nc" id="L50">    }</span>
+
+    public int getQuantity() {
+<span class="fc" id="L53">        return quantity;</span>
+    }
+
+    public void setQuantity(int quantity) {
+<span class="nc" id="L57">        this.quantity = quantity;</span>
+<span class="nc" id="L58">    }</span>
+
+    public BigDecimal getPrice() {
+<span class="fc" id="L61">        return price;</span>
+    }
+
+    public void setPrice(BigDecimal price) {
+<span class="nc" id="L65">        this.price = price;</span>
+<span class="nc" id="L66">    }</span>
+
+    public BigDecimal getSubtotal() {
+<span class="nc" id="L69">        return price.multiply(BigDecimal.valueOf(quantity));</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L74">        return &quot;OrderItem{productName='&quot; + productName + &quot;', qty=&quot; + quantity + &quot;, price=&quot; + price + &quot;}&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

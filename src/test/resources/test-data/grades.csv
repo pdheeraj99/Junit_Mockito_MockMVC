@@ -1,0 +1,17 @@
+score,expectedGrade,description
+95,A,Excellent score
+90,A,A grade boundary
+89,B,Just below A
+85,B,Good B grade
+80,B,B grade boundary
+79,C,Just below B
+75,C,Average C grade
+70,C,C grade boundary
+69,D,Just below C
+65,D,D grade
+60,D,D grade boundary
+59,F,Just below D - Fail
+50,F,Fail
+25,F,Poor performance
+0,F,Zero score
+100,A,Perfect score
