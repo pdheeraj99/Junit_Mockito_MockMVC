@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.learning.junit5.Part7_NestedTestsTest$FactorialBDDTests
+-------------------------------------------------------------------------------
+Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.041 s -- in com.learning.junit5.Part7_NestedTestsTest$FactorialBDDTests

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.learning.junit5.Part3_DisplayNameAndDisabledTest
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 6, Time elapsed: 0.065 s -- in com.learning.junit5.Part3_DisplayNameAndDisabledTest
