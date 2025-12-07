@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.learning.service.Part8_RepeatedTestsTest
 -------------------------------------------------------------------------------
-Tests run: 41, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.118 s -- in com.learning.service.Part8_RepeatedTestsTest
+Tests run: 41, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.136 s -- in com.learning.service.Part8_RepeatedTestsTest
